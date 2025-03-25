@@ -3,24 +3,25 @@ package org.example.shop;
 import org.example.shop.Input.Input;
 import org.example.shop.services.CustomerServiceImplements;
 import org.example.shop.services.ProductServiceImplements;
-import org.example.shop.services.PurchaseService;
 import org.example.shop.services.PurchaseServiceImplements;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+
 public class ShopApplication implements CommandLineRunner {
     private final CustomerServiceImplements customerServiceImplements;
     private final ProductServiceImplements productServiceImplements;
     private final PurchaseServiceImplements purchaseServiceImplements;
-    private Input input;
+    private final Input input;
 
-    public ShopApplication(CustomerServiceImplements customerServiceImplements, ProductServiceImplements productServiceImplements, PurchaseService purchaseService, PurchaseServiceImplements purchaseServiceImplements) {
+    public ShopApplication(Input input, CustomerServiceImplements customerServiceImplements,
+                           ProductServiceImplements productServiceImplements, PurchaseServiceImplements purchaseServiceImplements) {
         this.input = input;
         this.customerServiceImplements = customerServiceImplements;
         this.productServiceImplements = productServiceImplements;
-
         this.purchaseServiceImplements = purchaseServiceImplements;
     }
 
@@ -31,67 +32,76 @@ public class ShopApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         boolean repeat = true;
-        do {
-            System.out.println("1. Add Product");
-            System.out.println("2. List Products");
-            System.out.println("3. Edit Product");
-            System.out.println("4. Add Customer");
-            System.out.println("5. List Customers");
-            System.out.println("6. Edit Customer");
-            System.out.println("7. Buy Product");
-            System.out.println("8. Get Income");
-            System.out.println("9. Exit");
-            System.out.print("Choose an option: ");
-            int choice = input.nextInt();
+        while (repeat) {
+            System.out.println("\n--- МАГАЗИН ---");
+            System.out.println("1. Добавить продукт");
+            System.out.println("2. Список продуктов");
+            System.out.println("3. Изменить продукт");
+            System.out.println("4. Добавить покупателя");
+            System.out.println("5. Список покупателей");
+            System.out.println("6. Изменить покупателя");
+            System.out.println("7. Купить продукт");
+            System.out.println("8. Получить доход");
+            System.out.println("9. Выход");
+            System.out.print("Выберите вариант: ");
 
-            switch (choice) {
-                case 1:
-                    if(productServiceImplements.add()){
-                        System.out.println("Product added");
-                    }else{
-                        System.out.println("Product not added");
-                    }
-                    break;
-                case 2:
-                    if(!productServiceImplements.print()){
-                        System.out.println("Product not printed");
-                    }
-                    break;
-                case 3:
-                    if(!productServiceImplements.edit()){
-                        System.out.println("Product not edited");
-                    }
-                    break;
-                case 4:
-                    if(customerServiceImplements.add()){
-                        System.out.println("Customer added");
-                    }else{
-                        System.out.println("Customer is not added");
-                    }
-                    break;
-                case 5:
-                    if(!customerServiceImplements.print()){
-                        System.out.println("Customer not printed");
-                    }
-                    break;
-                    case 6:
-                        if(!customerServiceImplements.edit()){
-                            System.out.println("Customer not edited");
+            try {
+                int choice = input.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        System.out.println(productServiceImplements.add() ? "Продукт добавлен" : "Продукт не добавлен");
+                        break;
+                    case 2:
+                        if (!productServiceImplements.print()) {
+                            System.out.println("Нету доступных продуктов");
                         }
-                            break;
-                        case 7:
-                            if()
-                                break;
-                        case 8:
-                            getIncome(scanner);
-                            break;
-                        case 9:
-                            System.out.println("Exiting...");
-                            return;
-                        default:
-                            System.out.println("Invalid option. Please try again.");
+                        break;
+                    case 3:
+                        if (!productServiceImplements.edit()) {
+                            System.out.println("Продукт не изменен");
+                        }
+                        break;
+                    case 4:
+                        System.out.println(customerServiceImplements.add() ? "Покупатель добавлен" : "Покупатель не добавлен");
+                        break;
+                    case 5:
+                        if (!customerServiceImplements.print()) {
+                            System.out.println("Нету покупателей");
+                        }
+                        break;
+                    case 6:
+                        if (!customerServiceImplements.edit()) {
+                            System.out.println("Покупатель не изменен");
+                        }
+                        break;
+                    case 7:
+                        System.out.print("Введите ID продукта: ");
+                        Long productId = input.nextLong();
+                        System.out.print("Введите ID клиента: ");
+                        Long customerId = input.nextLong();
+
+                        if (purchaseServiceImplements.buyProduct(productId, customerId) != null) {
+                            System.out.println("Покупка успешна");
+                        } else {
+                            System.out.println("Ошибка при покупке");
+                        }
+
+                    case 8:
+                        System.out.println("Вышло по итогу: " + purchaseServiceImplements.getIncome());
+                        break;
+                    case 9:
+                        System.out.println("Выход с программы...");
+                        repeat = false;
+                        break;
+                    default:
+                        System.out.println("Неверно-выбранная опция. Пожалуйста, повторите попытку");
+                }
+            } catch (Exception e) {
+                System.out.println("Неправильный ввод. Пожалуйста, введите число");
+                input.nextLine(); // Очистка ввода
             }
-
         }
-
     }
+}
+

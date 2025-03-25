@@ -3,8 +3,7 @@ package org.example.shop.services;
 import org.example.shop.models.Product;
 import org.example.shop.helpers.ProductHelper;
 import org.example.shop.repositories.ProductRepository;
-import org.example.shop.helpers.ProductHelper;
-import org.example.shop.services.ProductService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -43,13 +42,26 @@ public class ProductServiceImplements implements ProductService {
         return false;
     }
 
-    private Optional<Product> getProductForModify() {
-        Optional<Long> optionalProductId = productHelper.getIdModifyProduct(productRepository.findAll(), true);
-        return optionalProductId.flatMap(productRepository::findById);
-    }
 
     @Override
     public boolean print() {
         return productHelper.printList(productRepository.findAll(), true);
     }
+
+    @Override
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void saveProduct(Product product) {
+        productRepository.save(product);
+    }
+
+    // Вспомогательный метод (оставляем)
+    private Optional<Product> getProductForModify() {
+        Optional<Long> optionalProductId = productHelper.getIdModifyProduct(productRepository.findAll(), true);
+        return optionalProductId.flatMap(productRepository::findById);
+    }
 }
+

@@ -2,7 +2,7 @@ package org.example.shop.helpers;
 
 import org.example.shop.Input.Input;
 import org.example.shop.models.Product;
-import org.example.shop.Input.Input;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -62,4 +62,40 @@ public class ProductHelperImplements implements ProductHelper {
         }
         return true;
     }
+
+    @Override
+    public Optional<Long> getIdModifyProduct(List<Product> products, boolean enabled) {
+        if (products.isEmpty()) {
+            System.out.println("Список товаров пуст!");
+            return Optional.empty();
+        }
+
+
+        System.out.println("\nСписок доступных товаров:");
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            System.out.printf("%d. %s (Цена: %.2f, Остаток: %d)%n",
+                    i + 1, product.getName(), product.getPrice(), product.getQuantity());
+        }
+
+
+        System.out.print("\nВведите номер товара для редактирования: ");
+        try {
+            int choice = input.nextInt();
+            input.nextLine();
+
+            // Проверяем корректность выбора
+            if (choice >= 1 && choice <= products.size()) {
+                return Optional.of(products.get(choice - 1).getId());
+            } else {
+                System.out.println("Некорректный номер товара!");
+            }
+        } catch (Exception e) {
+            System.out.println("Ошибка ввода: " + e.getMessage());
+            input.nextLine();
+        }
+
+        return Optional.empty();
+    }
+
 }

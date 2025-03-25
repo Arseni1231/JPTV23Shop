@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class CustomerServiceImplements implements AppService {
+public class CustomerServiceImplements implements CustomerService {
     private final CustomerHelper customerHelper;
     private final CustomerRepository customerRepository;
 
@@ -42,13 +42,24 @@ public class CustomerServiceImplements implements AppService {
         return false;
     }
 
-    private Optional<Customer> getCustomerForModify() {
-        Optional<Long> optionalCustomerId = customerHelper.getIdModifyCustomer(customerRepository.findAll(), true);
-        return optionalCustomerId.flatMap(customerRepository::findById);
-    }
-
     @Override
     public boolean print() {
         return customerHelper.printList(customerRepository.findAll(), true);
+    }
+
+
+    @Override
+    public Customer getCustomerById(Long id) {
+        return customerRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void saveCustomer(Customer customer) {
+        customerRepository.save(customer);
+    }
+
+    private Optional<Customer> getCustomerForModify() {
+        Optional<Long> id = customerHelper.getIdModifyCustomer(customerRepository.findAll(), true);
+        return id.flatMap(customerRepository::findById);
     }
 }

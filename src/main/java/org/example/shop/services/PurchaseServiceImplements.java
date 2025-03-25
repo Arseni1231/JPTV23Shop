@@ -50,6 +50,12 @@ public class PurchaseServiceImplements implements PurchaseService {
     public double getIncome(LocalDateTime start, LocalDateTime end) {
         List<Purchase> purchases = purchaseRepository.findByPurchaseDateBetween(start, end);
         return purchases.stream().mapToDouble(p -> p.getProduct().getPrice()).sum();
+
+    }
+
+    @Override
+    public double getIncome() {
+        return getIncome(LocalDateTime.MIN, LocalDateTime.MAX);  // MIN и MAX = весь период
     }
 }
 

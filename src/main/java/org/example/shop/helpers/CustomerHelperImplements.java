@@ -93,7 +93,12 @@ public class CustomerHelperImplements implements CustomerHelper {
     public List<Long> listIdPurchasedProducts(List<Product> products, boolean enable) {
         System.out.print("Сколько товаров купил клиент: ");
         int count = input.nextInt();
-        this.printList(products, enable);
+        System.out.println("\nДоступные товары:");
+        for (int i = 0; i < products.size(); i++) {
+            Product p = products.get(i);
+            System.out.printf("%d. %s (Цена: %.2f, Остаток: %d)%n",
+                    i + 1, p.getName(), p.getPrice(), p.getQuantity());
+        }
         List<Long> productIds = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             System.out.printf("Выберите товар %d из %d: ", i + 1, count);
